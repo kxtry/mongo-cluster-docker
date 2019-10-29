@@ -4,8 +4,8 @@ services:
         container_name: "mgoprimary"
         image: mongo:4.2
         ports:
-            - "30012:27017"
-        command: mongod --replSet vmlocal --port 27017  --oplogSize 16 --noprealloc --smallfiles
+            - "27017:27017"
+        command: mongod --replSet vmlocal --port 27017  --oplogSize 16
         links:
             - mgoreplica1:mgoreplica1
             - mgoreplica2:mgoreplica2
@@ -15,16 +15,16 @@ services:
         container_name: "mgoreplica1"
         image: mongo:4.2
         ports:
-            - "30013:27017"
-        command: mongod --replSet vmlocal --port 27017  --oplogSize 16 --noprealloc --smallfiles
+            - "27018:27017"
+        command: mongod --replSet vmlocal --port 27017  --oplogSize 16
         restart: always 
 
     mgoreplica2:
         container_name: "mgoreplica2"
         image: mongo:4.2
         ports:
-            - "30011:27017"
-        command: mongod --replSet vmlocal --port 27017  --oplogSize 16 --noprealloc --smallfiles        
+            - "27019:27017"
+        command: mongod --replSet vmlocal --port 27017  --oplogSize 16        
         restart: always
 
     setup-vmlocal:
