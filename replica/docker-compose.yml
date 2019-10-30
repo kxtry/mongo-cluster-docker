@@ -52,6 +52,8 @@ services:
             - "mgoprimary"
             - "mgoreplica1"
             - "mgoreplica2"
+        extra_hosts:
+            - "mgo.db.com:192.168.10.104"
         links:
             - mgoprimary:mgoprimary
             - mgoreplica1:mgoreplica1
