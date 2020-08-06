@@ -1,69 +1,69 @@
 version: '3'
 services:
-    mgoprimary:
-        container_name: "mgoprimary"
+    mgo1:
+        container_name: "mgo1"
         image: mongo:4.2
         ports:
             - "27017:27017"
         command: mongod --replSet vmlocal --port 27017  --oplogSize 16
         links:
-            - mgoreplica1:mgoreplica1
-            - mgoreplica2:mgoreplica2
+            - mgo2:mgo2
+            - mgo3:mgo3
         restart: always
         extra_hosts:
-            - "mgo.db.com:{{extern_ip}}"
+            - "mgo.abc.cn:{{extern_ip}}"
         volumes:
             - /etc/localtime:/etc/localtime:ro
             - /etc/timezone:/etc/timezone:ro
-            - ./data/mgoprimary/data:/data/db
+            - ./data/mgo1/data:/data/db:Z
 
-    mgoreplica1:
-        container_name: "mgoreplica1"
+    mgo2:
+        container_name: "mgo2"
         image: mongo:4.2
         ports:
             - "27018:27017"
         command: mongod --replSet vmlocal --port 27017  --oplogSize 16
         restart: always
         extra_hosts:
-            - "mgo.db.com:{{extern_ip}}" 
+            - "mgo.abc.cn:{{extern_ip}}" 
         volumes:
             - /etc/localtime:/etc/localtime:ro
             - /etc/timezone:/etc/timezone:ro
-            - ./data/mgoreplica1/data:/data/db
+            - ./data/mgo2/data:/data/db:Z
 
-    mgoreplica2:
-        container_name: "mgoreplica2"
+    mgo3:
+        container_name: "mgo3"
         image: mongo:4.2
         ports:
             - "27019:27017"
         command: mongod --replSet vmlocal --port 27017  --oplogSize 16        
         restart: always
         extra_hosts:
-            - "mgo.db.com:{{extern_ip}}"
+            - "mgo.abc.cn:{{extern_ip}}"
         volumes:
             - /etc/localtime:/etc/localtime:ro
             - /etc/timezone:/etc/timezone:ro
-            - ./data/mgoreplica2/data:/data/db
+            - ./data/mgo3/data:/data/db:Z
 
     setup-vmlocal:
         container_name: "setup-vmlocal"
         image: mongo:4.2
         depends_on:
-            - "mgoprimary"
-            - "mgoreplica1"
-            - "mgoreplica2"
+            - "mgo1"
+            - "mgo2"
+            - "mgo3"
         extra_hosts:
-            - "mgo.db.com:{{extern_ip}}"
+            - "mgo.abc.cn:{{extern_ip}}"
         links:
-            - mgoprimary:mgoprimary
-            - mgoreplica1:mgoreplica1
-            - mgoreplica2:mgoreplica2
+            - mgo1:mgo1
+            - mgo2:mgo2
+            - mgo3:mgo3
         volumes:
             - ./scripts:/scripts
         environment: 
-            - MONGO1=mgo.db.com:27017
-            - MONGO2=mgo.db.com:27018
-            - MONGO3=mgo.db.com:27019
+            - MONGO1=mgo.abc.cn:27017
+            - MONGO2=mgo.abc.cn:27018
+            - MONGO3=mgo.abc.cn:27019
             - RS=vmlocal
         entrypoint: [ "/scripts/setup.sh" ]
 
